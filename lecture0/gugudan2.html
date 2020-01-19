@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	      <script src="https://fb.me/react-15.1.0.js"></script>
+	      <script src="https://fb.me/react-dom-15.1.0.js"></script>
+	      <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+	</head>
+	<body>
+		<div id="root"> </div>
+
+		<script type="text/babel"> 
+			class GuGuDan extends React.Component {
+				constructor(props){
+                    super(props);
+                    this.input = '';
+					this.state = {
+                        first: this.getRandomFirst(),
+                        second: this.getRandomSecond(),
+                        value: '',
+                        result: '',
+					};
+                }
+                /*
+                생성자(constructor)를 사용하지 않아도 클래스 변수로 선언해도 됨.
+                state = {
+                    first: this.getRandomFirst(),
+                    second: this.getRandomSecond(),
+                    value: '',
+                    result: '',
+                };
+                */
+                // 화살표 함수를 쓰지 않으면 this 가 달라져 버리기 때문에 꼭 사용해야함
+				onChange = (e)=>{
+					this.setState(
+						{value: e.target.value}
+					);
+				}
+				onSubmit = (e)=>{
+					e.preventDefault();
+					let v = parseInt(this.state.value);
+					let b = v === this.state.first * this.state.second;
+					let result = '틀렸습니다';
+					if (b){
+						result = '정답입니다!' ;
+						this.setState((prevState)=>{
+							return {
+                                first: this.getRandomFirst(),
+                                second: this.getRandomSecond(),
+                            }
+						})
+                    }
+                    // 비동기로 처리되는걸 막기 위해 setState안에 함수를 만들어서 이전상태값을 참조한 다음 새로운 state를 리턴해준다.
+					this.setState((prevState)=>{
+                        return {
+                            result : prevState.value + ' 은(는) ' + result,
+                            value : ''
+                        }
+                    });
+                    this.input.focus();                    
+				}
+				getRandomFirst = ()=>{
+					return Math.ceil(Math.random() * 9);
+				}
+				getRandomSecond = ()=>{
+					return Math.ceil(Math.random() * 9);
+                }
+                inputFocus = (c)=>{
+                    this.input = c;
+                }
+                // render 함수는 굳이 화살표 함수로 할 필요 없음.
+                // form 대신 버튼으로 만들때 onClick = this.onSubmit 으로 대체가능.
+                // 아무런 기능을 하지 않는 <div>는 <></> 나 <React.Fragment></React.Fragment>로 대체가능.
+				render(){
+                    console.log('랜더링 시작'); // setState 할때마다 render 함수가 호출된다. 성능의 문제...
+					return (
+							<div>
+								<div>{this.state.first} 곱하기 {this.state.second} 는 ?</div>
+                                <input ref={this.inputFocus} type="number" value={this.state.value} onChange={this.onChange}/>
+                                <button onClick={this.onSubmit}>입력!</button>
+								<div>{this.state.result}</div>
+							</div>
+						   );
+				}
+			}
+
+			ReactDOM.render(<GuGuDan/>, document.querySelector('#root'));
+		</script>
+	</body>
+</html>

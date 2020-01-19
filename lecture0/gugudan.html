@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	      <script src="https://fb.me/react-15.1.0.js"></script>
+	      <script src="https://fb.me/react-dom-15.1.0.js"></script>
+	      <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+	</head>
+	<body>
+		<div id="root"> </div>
+
+		<script type="text/babel"> 
+			class GuGuDan extends React.Component {
+				constructor(props){
+					super(props);
+					this.state = {
+                        first: this.getRandomFirst(),
+                        second: this.getRandomSecond(),
+                        value: '',
+                        result: '',
+					};
+				}
+				onChange = (e)=>{
+					this.setState(
+						{value: e.target.value}
+					);
+				}
+				onSubmit = (e)=>{
+					e.preventDefault();
+					let v = parseInt(this.state.value);
+					let b = v === this.state.first * this.state.second;
+					let result = '틀렸습니다';
+					if (b){
+						result = '정답입니다!' ;
+						this.setState({
+							first: this.getRandomFirst(),
+							second: this.getRandomSecond(),
+						})
+					}
+					this.setState({
+						result : result,
+						value : ''
+					});
+				}
+				getRandomFirst = ()=>{
+					return Math.ceil(Math.random() * 9);
+				}
+				getRandomSecond = ()=>{
+					return Math.ceil(Math.random() * 9);
+				}
+
+				render(){
+					return (
+							<React.Fragment>
+								<div>{this.state.first} 곱하기 {this.state.second} 는 ?</div>
+								<form onSubmit={this.onSubmit}>
+									<input type="number" value={this.state.value} onChange={this.onChange}/>
+									<button>입력!</button>
+								</form>
+								<div>{this.state.result}</div>
+							</React.Fragment>
+						   );
+				}
+			}
+
+			ReactDOM.render(<GuGuDan/>, document.querySelector('#root'));
+		</script>
+	</body>
+</html>
